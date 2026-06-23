@@ -1,0 +1,78 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches/
+!.yarn/plugins/
+!.yarn/releases/
+!.yarn/sdks/
+!.yarn/versions/
+
+# Next.js build output
+.next/
+out/
+build/
+dist/
+
+# Production and deployment metadata
+.vercel/
+.netlify/
+
+# Environment variables and local secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.cert
+*.crt
+pem/
+certs/
+
+# Logs and diagnostics
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.codex-dev.*.log
+
+# Testing and coverage
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# TypeScript and framework generated files
+*.tsbuildinfo
+next-env.d.ts
+
+# Local caches
+.eslintcache
+.stylelintcache
+.cache/
+.parcel-cache/
+.turbo/
+.swc/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Local agent/tooling state
+.agents/
+.codex/
+AGENTS.md
+CLAUDE.md
+
+# Accidental scaffold directory from shell brace text
+{types,lib,store,context,hooks,components/
