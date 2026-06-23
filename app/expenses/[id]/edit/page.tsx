@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { Expense } from "@/types/expense";
 import { editExpense } from "@/store/expenseSlice";
 import { AppDispatch } from "@/store";
+import { useCurrency } from "@/context/CurrencyContext";
 import { useExpenseForm } from "@/hooks/useExpenseForm";
 import { ALL_CATEGORIES, capitalize } from "@/lib/utils";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
@@ -19,6 +20,7 @@ export default function EditExpensePage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
+  const { currency, currencySymbol } = useCurrency();
 
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -144,18 +146,23 @@ export default function EditExpensePage() {
           {/* Amount */}
           <div>
             <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-              Amount ($) *
+              Amount ({currency}) *
             </label>
-            <input
-              type="number"
-              name="amount"
-              value={values.amount}
-              onChange={handleChange}
-              placeholder="0.00"
-              min="0.01"
-              step="0.01"
-              className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 bg-gray-50"
-            />
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">
+                {currencySymbol}
+              </span>
+              <input
+                type="number"
+                name="amount"
+                value={values.amount}
+                onChange={handleChange}
+                placeholder="0.00"
+                min="0.01"
+                step="0.01"
+                className="w-full pl-7 pr-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 bg-gray-50"
+              />
+            </div>
             {errors.amount && (
               <p className="mt-1 text-xs text-red-500">{errors.amount}</p>
             )}

@@ -35,6 +35,10 @@ export function ExpensesListClient({ initialExpenses }: ExpensesListClientProps)
   // Get filtered results from Redux (reactive to filter changes)
   const { filteredExpenses, count } = useFilteredExpenses();
 
+  function handleView(expense: Expense) {
+    router.push(`/expenses/${expense.id}`);
+  }
+
   function handleEdit(expense: Expense) {
     router.push(`/expenses/${expense.id}/edit`);
   }
@@ -86,6 +90,7 @@ export function ExpensesListClient({ initialExpenses }: ExpensesListClientProps)
             <ExpenseCard
               key={expense.id}
               expense={expense}
+              onView={handleView}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />

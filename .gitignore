@@ -75,4 +75,4 @@ AGENTS.md
 CLAUDE.md
 
 # Accidental scaffold directory from shell brace text
-{types,lib,store,context,hooks,components/
+\{types,lib,store,context,hooks,components/

@@ -11,8 +11,9 @@ import { useRouter } from "next/navigation";
 import { Expense } from "@/types/expense";
 import { createExpense } from "@/store/expenseSlice";
 import { AppDispatch } from "@/store";
+import { useCurrency } from "@/context/CurrencyContext";
 import { useExpenseForm } from "@/hooks/useExpenseForm";
-import { ALL_CATEGORIES, capitalize, getCategoryEmoji } from "@/lib/utils";
+import { ALL_CATEGORIES, getCategoryEmoji } from "@/lib/utils";
 import { PlusCircle, Loader2, CheckCircle } from "lucide-react";
 
 export default function AddExpensePage() {
@@ -21,6 +22,7 @@ export default function AddExpensePage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const { currency, currencySymbol } = useCurrency();
 
   const { values, errors, handleChange, handleSubmit, reset } =
     useExpenseForm();
@@ -101,11 +103,11 @@ export default function AddExpensePage() {
           {/* Amount */}
           <div>
             <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-              Amount ($) *
+              Amount ({currency}) *
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">
-                $
+                {currencySymbol}
               </span>
               <input
                 type="number"
@@ -122,7 +124,7 @@ export default function AddExpensePage() {
               <p className="mt-1 text-xs text-red-500">{errors.amount}</p>
             )}
             <p className="mt-1 text-xs text-gray-400">
-              Enter in dollars (e.g. 47.50)
+              Enter in {currency} (e.g. 47.50)
             </p>
           </div>
 
@@ -223,7 +225,7 @@ export default function AddExpensePage() {
       {/* Quick-add tip */}
       <div className="bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-3">
         <p className="text-xs text-indigo-600">
-          💡 <strong>Tip:</strong> Enter the dollar amount (e.g. 47.50). It will
+          💡 <strong>Tip:</strong> Enter the {currency} amount (e.g. 47.50). It will
           be stored accurately as cents internally.
         </p>
       </div>

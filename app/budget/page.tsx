@@ -39,7 +39,7 @@ function getRecentMonths(): string[] {
 
 export default function BudgetPage() {
   const dispatch = useDispatch<AppDispatch>();
-  const { formatAmount } = useCurrency();
+  const { currency, currencySymbol, formatAmount } = useCurrency();
 
   const budgets = useSelector((state: RootState) => state.budgets.budgets);
   const budgetStatus = useSelector((state: RootState) => state.budgets.status);
@@ -162,11 +162,11 @@ export default function BudgetPage() {
             {/* Amount */}
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                Budget Amount ($)
+                Budget Amount ({currency})
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
-                  $
+                  {currencySymbol}
                 </span>
                 <input
                   type="number"

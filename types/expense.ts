@@ -61,6 +61,7 @@ export type SupportedCurrency = "USD" | "EUR" | "GBP" | "INR";
 
 export interface CurrencyContextValue {
   currency: SupportedCurrency;
+  currencySymbol: string;
   setCurrency: (c: SupportedCurrency) => void;
   formatAmount: (cents: number) => string; // divides by 100, formats with Intl
   locale: string;

@@ -28,6 +28,7 @@ const STORAGE_KEY = "expense_tracker_currency";
 // Create the context with a default value (will be overridden by provider)
 const CurrencyContext = createContext<CurrencyContextValue>({
   currency: "USD",
+  currencySymbol: "$",
   setCurrency: () => {},
   formatAmount: (cents: number) => `$${(cents / 100).toFixed(2)}`,
   locale: "en-US",
@@ -51,6 +52,16 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const locale = CURRENCY_LOCALE_MAP[currency];
+  const currencySymbol =
+    new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      currencyDisplay: "narrowSymbol",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })
+      .formatToParts(0)
+      .find((part) => part.type === "currency")?.value ?? currency;
 
   /**
    * Format a cents integer to a currency string.
@@ -72,7 +83,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <CurrencyContext.Provider
-      value={{ currency, setCurrency, formatAmount, locale }}
+      value={{ currency, currencySymbol, setCurrency, formatAmount, locale }}
     >
       {children}
     </CurrencyContext.Provider>

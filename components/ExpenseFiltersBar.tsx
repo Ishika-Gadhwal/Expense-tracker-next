@@ -10,6 +10,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import { clearFilters, setFilters } from "@/store/expenseSlice";
+import { useCurrency } from "@/context/CurrencyContext";
 import { ExpenseCategory } from "@/types/expense";
 import { ALL_CATEGORIES, capitalize, cn } from "@/lib/utils";
 import { Search, X, SlidersHorizontal } from "lucide-react";
@@ -21,6 +22,7 @@ interface ExpenseFiltersBarProps {
 export function ExpenseFiltersBar({ className }: ExpenseFiltersBarProps) {
   const dispatch = useDispatch<AppDispatch>();
   const filters = useSelector((state: RootState) => state.expenses.filters);
+  const { currencySymbol } = useCurrency();
 
   // Count how many filters are active
   const activeCount = [
@@ -47,7 +49,7 @@ export function ExpenseFiltersBar({ className }: ExpenseFiltersBarProps) {
 
   function handleMinAmountChange(e: React.ChangeEvent<HTMLInputElement>) {
     const val = e.target.value;
-    // Convert from dollar input to cents for the store
+    // Convert from selected currency input to cents for the store
     dispatch(
       setFilters({
         minAmount: val ? Math.round(parseFloat(val) * 100) : null,
@@ -68,7 +70,7 @@ export function ExpenseFiltersBar({ className }: ExpenseFiltersBarProps) {
     dispatch(clearFilters());
   }
 
-  // Convert cents back to dollar string for the input display
+  // Convert cents back to decimal string for the input display
   const minDisplay =
     filters.minAmount !== null ? (filters.minAmount / 100).toString() : "";
   const maxDisplay =
@@ -139,7 +141,7 @@ export function ExpenseFiltersBar({ className }: ExpenseFiltersBarProps) {
         <div className="flex gap-2">
           <input
             type="number"
-            placeholder="Min $"
+            placeholder={`Min ${currencySymbol}`}
             value={minDisplay}
             onChange={handleMinAmountChange}
             min="0"
@@ -148,7 +150,7 @@ export function ExpenseFiltersBar({ className }: ExpenseFiltersBarProps) {
           />
           <input
             type="number"
-            placeholder="Max $"
+            placeholder={`Max ${currencySymbol}`}
             value={maxDisplay}
             onChange={handleMaxAmountChange}
             min="0"

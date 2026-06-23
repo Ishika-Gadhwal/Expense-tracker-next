@@ -49,6 +49,7 @@ function CustomTooltip({
 
 export function DailyBarChart({ expenses, month }: DailyBarChartProps) {
   const daysInMonth = getDaysInMonth(month);
+  const { formatAmount } = useCurrency();
 
   // Build an array of { day, amount } for every day in the month
   const dailyData = Array.from({ length: daysInMonth }, (_, i) => {
@@ -89,7 +90,7 @@ export function DailyBarChart({ expenses, month }: DailyBarChartProps) {
           tickLine={false}
         />
         <YAxis
-          tickFormatter={(v: number) => `$${(v / 100).toFixed(0)}`}
+          tickFormatter={(v: number) => formatAmount(v).replace(/\.00$/, "")}
           tick={{ fontSize: 10, fill: "#9ca3af" }}
           axisLine={false}
           tickLine={false}

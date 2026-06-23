@@ -6,7 +6,7 @@
 // Edit/Delete actions in a dropdown menu.
 // ============================================================
 
-import { useState } from "react";
+import { useState, type KeyboardEvent, type MouseEvent } from "react";
 import { Expense } from "@/types/expense";
 import { useCurrency } from "@/context/CurrencyContext";
 import { CategoryBadge } from "./CategoryBadge";
@@ -19,6 +19,7 @@ import { MoreVertical, Pencil, Trash2, FileText } from "lucide-react";
 
 interface ExpenseCardProps {
   expense: Expense;
+  onView?: (expense: Expense) => void;
   onEdit: (expense: Expense) => void;
   onDelete: (id: string) => void;
   className?: string;
@@ -26,6 +27,7 @@ interface ExpenseCardProps {
 
 export function ExpenseCard({
   expense,
+  onView,
   onEdit,
   onDelete,
   className,
@@ -46,13 +48,37 @@ export function ExpenseCard({
     setShowDeleteConfirm(false);
   }
 
+  function handleCardClick() {
+    onView?.(expense);
+  }
+
+  function handleCardKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (!onView) return;
+    if (event.target !== event.currentTarget) return;
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onView(expense);
+    }
+  }
+
+  function stopCardNavigation(event: MouseEvent<HTMLElement>) {
+    event.stopPropagation();
+  }
+
   return (
     <div
+      role={onView ? "link" : undefined}
+      tabIndex={onView ? 0 : undefined}
+      aria-label={onView ? `View details for ${expense.title}` : undefined}
+      onClick={handleCardClick}
+      onKeyDown={handleCardKeyDown}
       className={cn(
         "bg-white rounded-xl border border-gray-100 shadow-sm",
         "border-l-4",
         borderColor,
         "hover:shadow-md transition-all duration-200 group",
+        onView && "cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
         className
       )}
     >
@@ -90,7 +116,10 @@ export function ExpenseCard({
             {/* Dropdown menu */}
             <div className="relative">
               <button
-                onClick={() => setMenuOpen((v) => !v)}
+                onClick={(event) => {
+                  stopCardNavigation(event);
+                  setMenuOpen((v) => !v);
+                }}
                 className={cn(
                   "p-1 rounded-lg text-gray-400 hover:text-gray-700",
                   "hover:bg-gray-100 transition-colors",
@@ -106,9 +135,15 @@ export function ExpenseCard({
                   {/* Click-outside overlay */}
                   <div
                     className="fixed inset-0 z-10"
-                    onClick={() => setMenuOpen(false)}
+                    onClick={(event) => {
+                      stopCardNavigation(event);
+                      setMenuOpen(false);
+                    }}
                   />
-                  <div className="absolute right-0 top-7 z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[140px]">
+                  <div
+                    className="absolute right-0 top-7 z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[140px]"
+                    onClick={stopCardNavigation}
+                  >
                     <button
                       onClick={() => {
                         setMenuOpen(false);
@@ -136,7 +171,10 @@ export function ExpenseCard({
 
       {/* Inline delete confirmation */}
       {showDeleteConfirm && (
-        <div className="px-4 pb-4 border-t border-gray-100 pt-3">
+        <div
+          className="px-4 pb-4 border-t border-gray-100 pt-3"
+          onClick={stopCardNavigation}
+        >
           <p className="text-xs text-gray-600 mb-2">
             Delete &quot;{expense.title}&quot;? This cannot be undone.
           </p>
