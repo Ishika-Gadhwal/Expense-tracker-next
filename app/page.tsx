@@ -1,11 +1,12 @@
 // ============================================================
 // app/page.tsx — Dashboard (Server Component)
-// Fetches expenses + current month budget from API.
-// Passes data to Client Component charts.
+// Imports expenses + budget directly from data layer.
+// No HTTP fetch needed — data is in-memory (lib/data.ts).
 // ============================================================
 
-import { Expense, MonthlyBudget } from "@/types/expense";
+import { MonthlyBudget } from "@/types/expense";
 import { DashboardClient } from "./DashboardClient";
+import { expenses, findBudgetByMonth } from "@/lib/data";
 
 /** Get the current month in YYYY-MM (server-side safe) */
 function getCurrentMonth(): string {
@@ -21,35 +22,20 @@ export default async function DashboardPage({
   const params = await searchParams;
   const currentMonth = getCurrentMonth();
 
-  // Fetch all expenses (no-store = always fresh, no Next.js cache)
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  // ✅ Import directly from data layer — no HTTP fetch, works on Vercel
+  const allExpenses = [...expenses].sort((a, b) => {
+    if (b.date !== a.date) return b.date.localeCompare(a.date);
+    return b.createdAt.localeCompare(a.createdAt);
+  });
 
-  let expenses: Expense[] = [];
-  let budget: MonthlyBudget = { month: currentMonth, amount: 0 };
-
-  try {
-    const [expensesRes, budgetRes] = await Promise.all([
-      fetch(`${baseUrl}/api/expenses`, { cache: "no-store" }),
-      fetch(`${baseUrl}/api/budget?month=${currentMonth}`, {
-        cache: "no-store",
-      }),
-    ]);
-
-    if (expensesRes.ok) {
-      expenses = (await expensesRes.json()) as Expense[];
-    }
-    if (budgetRes.ok) {
-      budget = (await budgetRes.json()) as MonthlyBudget;
-    }
-  } catch {
-    // If API calls fail on cold start, client will fetch via Redux
-  }
+  const budgetData = findBudgetByMonth(currentMonth);
+  const budget: MonthlyBudget = budgetData ?? { month: currentMonth, amount: 0 };
 
   const sessionError = params?.error === "session_required";
 
   return (
     <DashboardClient
-      initialExpenses={expenses}
+      initialExpenses={allExpenses}
       initialBudget={budget}
       currentMonth={currentMonth}
       sessionError={sessionError}
