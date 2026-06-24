@@ -6,23 +6,39 @@
 // Logs each matched request's path and timestamp.
 // ============================================================
 
-import { NextRequest, NextResponse } from "next/server";
+// import { NextRequest, NextResponse } from "next/server";
 
+// export function proxy(request: NextRequest) {
+//   const { pathname } = request.nextUrl;
+
+//   console.log(`[Proxy] ${new Date().toISOString()} - ${pathname}`);
+
+//   const sessionCookie = request.cookies.get("user_session");
+
+//   if (!sessionCookie) {
+//     const redirectUrl = new URL("/?error=session_required", request.url);
+//     return NextResponse.redirect(redirectUrl);
+//   }
+
+//   return NextResponse.next();
+// }
+
+// export const config = {
+//   matcher: ["/expenses/:path*", "/add/:path*", "/budget/:path*"],
+// };
+
+ 
+import { NextRequest, NextResponse } from "next/server";
+ 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
+ 
   console.log(`[Proxy] ${new Date().toISOString()} - ${pathname}`);
-
-  const sessionCookie = request.cookies.get("user_session");
-
-  if (!sessionCookie) {
-    const redirectUrl = new URL("/?error=session_required", request.url);
-    return NextResponse.redirect(redirectUrl);
-  }
-
+ 
+  // Pure frontend — no real auth, allow all routes through
   return NextResponse.next();
 }
-
+ 
 export const config = {
   matcher: ["/expenses/:path*", "/add/:path*", "/budget/:path*"],
 };
