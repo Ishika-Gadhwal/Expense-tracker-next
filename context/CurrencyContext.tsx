@@ -10,7 +10,6 @@ import React, {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import { CurrencyContextValue, SupportedCurrency } from "@/types/expense";
@@ -35,15 +34,12 @@ const CurrencyContext = createContext<CurrencyContextValue>({
 });
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  // Read saved currency from localStorage on mount; default to USD
-  const [currency, setCurrencyState] = useState<SupportedCurrency>("USD");
 
-  useEffect(() => {
+  const [currency, setCurrencyState] = useState<SupportedCurrency>(() => {
+    if (typeof window === "undefined") return "USD";
     const saved = localStorage.getItem(STORAGE_KEY) as SupportedCurrency | null;
-    if (saved && CURRENCY_LOCALE_MAP[saved]) {
-      setCurrencyState(saved);
-    }
-  }, []);
+    return saved && CURRENCY_LOCALE_MAP[saved] ? saved : "USD";
+  });
 
   /** Update currency and persist to localStorage */
   const setCurrency = useCallback((c: SupportedCurrency) => {

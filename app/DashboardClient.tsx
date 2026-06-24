@@ -11,9 +11,10 @@
 // - Last 5 expenses
 // ============================================================
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Expense, ExpenseCategory, MonthlyBudget } from "@/types/expense";
 import { setExpenses } from "@/store/expenseSlice";
 import { upsertBudget } from "@/store/budgetSlice";
@@ -35,7 +36,6 @@ import {
   AlertCircle,
   X,
 } from "lucide-react";
-import { useState } from "react";
 
 interface DashboardClientProps {
   initialExpenses: Expense[];
@@ -199,20 +199,22 @@ export function DashboardClient({
           <h2 className="text-sm font-semibold text-gray-700">
             Recent Expenses
           </h2>
-          <a
+          {/* ✅ Fix 1: Use Link instead of <a> for internal navigation */}
+          <Link
             href="/expenses"
             className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
           >
             View all →
-          </a>
+          </Link>
         </div>
 
         {recentExpenses.length === 0 ? (
           <div className="text-center py-8 text-gray-400 text-sm">
             No expenses yet.{" "}
-            <a href="/add" className="text-indigo-500 hover:underline">
+            {/* ✅ Fix 1: Use Link instead of <a> for internal navigation */}
+            <Link href="/add" className="text-indigo-500 hover:underline">
               Add your first expense
-            </a>
+            </Link>
           </div>
         ) : (
           <div className="space-y-2">
