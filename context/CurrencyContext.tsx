@@ -44,7 +44,9 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   /** Update currency and persist to localStorage */
   const setCurrency = useCallback((c: SupportedCurrency) => {
     setCurrencyState(c);
-    localStorage.setItem(STORAGE_KEY, c);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_KEY, c);
+    }
   }, []);
 
   const locale = CURRENCY_LOCALE_MAP[currency];
